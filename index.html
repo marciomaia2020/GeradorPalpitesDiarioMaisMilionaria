@@ -1,0 +1,2656 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Jogos da +Milionária - Personalizado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #31357c; /* Azul escuro (+Milionária) */
+            --primary-dark: #1d1f49;
+            --secondary-color: #6d72c5; /* Azul claro (+Milionária) */
+            --accent-color: #9295d3;
+            --background-color: #ededf8;
+            --table-header: #31357c;
+            --table-border: #6d72c5;
+            --table-even: #dbdcf0;
+            --table-odd: #ffffff;
+            --text-color: #0f1024;
+            --footer-color: #24275b;
+            --trevo-color: #4caf50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            width: 350px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-dark);
+            margin: 10px 0;
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 40px;
+        }
+
+        .centralizado {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+        }
+
+        /* Seção dos Últimos Resultados */
+        .latest-results-section {
+            background: linear-gradient(135deg, #ededf8, #dbdcf0);
+            border: 2px solid #31357c;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(49, 53, 124, 0.3);
+        }
+
+        .latest-results-title {
+            color: #31357c;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .result-card {
+            background: white;
+            border: 2px solid #6d72c5;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .result-card.destaque {
+            border: 3px solid #31357c;
+            box-shadow: 0 4px 12px rgba(49, 53, 124, 0.4);
+        }
+
+        .result-header {
+            color: var(--primary-dark);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .result-date {
+            color: #24275b;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .result-numbers {
+            margin: 10px 0;
+        }
+
+        .dezena-resultado {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            margin: 0 3px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(49, 53, 124, 0.3);
+        }
+
+        .trevo-resultado {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            text-align: center;
+            background-color: var(--trevo-color);
+            color: white;
+            border-radius: 50%;
+            margin: 0 3px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+            position: relative;
+        }
+
+        .trevo-resultado::before {
+            content: "🍀";
+            font-size: 1.2rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .use-result-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .use-result-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(49, 53, 124, 0.3);
+        }
+
+        /* Grid de Seleção de Números */
+        .number-selection-section {
+            background: linear-gradient(135deg, #ededf8, #dbdcf0);
+            border: 2px solid #31357c;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(49, 53, 124, 0.3);
+        }
+
+        .selection-title {
+            color: #31357c;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .selection-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+        }
+
+        .numbers-section {
+            margin-bottom: 30px;
+        }
+
+        .section-subtitle {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            gap: 8px;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+
+        .trevos-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            max-width: 400px;
+            margin: 0 auto 20px;
+        }
+
+        .number-btn, .trevo-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #6d72c5;
+            background: white;
+            color: var(--text-color);
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .trevo-btn {
+            border-color: var(--trevo-color);
+            position: relative;
+        }
+
+        .trevo-btn::before {
+            content: "🍀";
+            font-size: 1.5rem;
+            position: absolute;
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .number-btn:hover, .trevo-btn:hover {
+            border-color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .number-btn.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        .trevo-btn.selected {
+            background: var(--trevo-color);
+            color: white;
+            border-color: #388e3c;
+            transform: scale(1.1);
+        }
+
+        .number-btn.last-result, .trevo-btn.last-result {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: 3px solid #a93226;
+            animation: pulse 2s infinite;
+        }
+
+        .number-btn.last-result.selected {
+            background: linear-gradient(135deg, #8e44ad, #7d3c98);
+            border: 3px solid #6c3483;
+        }
+
+        .trevo-btn.last-result.selected {
+            background: linear-gradient(135deg, #8e44ad, #7d3c98);
+            border: 3px solid #6c3483;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+
+        .selection-controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .selection-controls .button {
+            margin: 0 10px;
+        }
+
+        /* Configurações de Geração */
+        .generation-section {
+            background: linear-gradient(135deg, #ededf8, #dbdcf0);
+            border: 2px solid #31357c;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(49, 53, 124, 0.3);
+        }
+
+        .generation-title {
+            color: #31357c;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .config-item {
+            background: white;
+            border: 2px solid #6d72c5;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .config-item label {
+            display: block;
+            color: #24275b;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .config-item input,
+        .config-item select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #6d72c5;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            background: #ededf8;
+            color: #24275b;
+        }
+
+        .config-item input:focus,
+        .config-item select:focus {
+            outline: none;
+            border-color: #31357c;
+            box-shadow: 0 0 0 3px rgba(49, 53, 124, 0.2);
+        }
+
+        /* Jogos Gerados */
+        .games-section {
+            background: linear-gradient(135deg, #ededf8, #dbdcf0);
+            border: 2px solid #31357c;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(49, 53, 124, 0.3);
+            display: none;
+        }
+
+        .games-title {
+            color: #31357c;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .game-card {
+            background: white;
+            border: 2px solid #6d72c5;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 0;
+        }
+
+        .game-original {
+            background: linear-gradient(135deg, #c8cae9, #b6b8e2);
+            border: 2px solid #31357c;
+        }
+
+        .game-adjusted {
+            background: linear-gradient(135deg, #ededf8, #dbdcf0);
+            border: 2px solid #6d72c5;
+        }
+
+        .game-type-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .digits-info {
+            background: var(--secondary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .result-premio-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: linear-gradient(135deg, #dbdcf0, #ededf8);
+            border-radius: 8px;
+            border: 1px solid #6d72c5;
+        }
+
+        .premio-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.8rem;
+        }
+
+        .premio-valor {
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+
+        .result-estimado {
+            text-align: center;
+            margin-top: 10px;
+            padding: 8px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .game-header {
+            color: var(--primary-dark);
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .game-numbers, .game-trevos {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .dezena-jogo {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            margin: 0 3px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(49, 53, 124, 0.3);
+        }
+
+        .trevo-jogo {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            text-align: center;
+            background-color: var(--trevo-color);
+            color: white;
+            border-radius: 50%;
+            margin: 0 3px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+            position: relative;
+        }
+
+        .trevo-jogo::before {
+            content: "🍀";
+            font-size: 1.2rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px;
+            display: inline-block;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 3px 6px rgba(49, 53, 124, 0.3);
+        }
+
+        .button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(109, 114, 197, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .download-buttons {
+            margin: 30px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 99999;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 2px solid #31357c;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 20px;
+            background-color: var(--table-even);
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+            display: none;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(49, 53, 124, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+		
+		img {
+			  display: block;
+			  margin: auto;
+			  width:200px;
+			  height:100px;
+			  opacity: 0.5;
+			}
+		img:hover {
+				opacity: 1.0;
+		}
+		
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .logo {
+                width: 280px;
+            }
+
+            .numbers-grid {
+                grid-template-columns: repeat(5, 1fr);
+                max-width: 100%;
+            }
+
+            .trevos-grid {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 200px;
+            }
+
+            .number-btn, .trevo-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 0.9rem;
+            }
+
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dezena-resultado, .dezena-jogo,
+            .trevo-resultado, .trevo-jogo {
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+                font-size: 0.8rem;
+                margin: 0 2px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .logo {
+                width: 220px;
+            }
+
+            .numbers-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+
+            .number-btn, .trevo-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img src="https://i.postimg.cc/DywMFvD1/mais-Milionaria.png" alt="+Milionária Logo" class="logo">
+        <h1>Gerador de Jogos da +Milionária</h1>
+    </div>
+    
+    <div class="centralizado">
+        <p>Crie seus jogos personalizados da <strong>+Milionária</strong> com estratégias inteligentes</p>
+        <p><small>Escolha 6 números + 2 trevos • Configure os ajustes • Gere quantos jogos quiser • Prêmios milionários</small></p>
+    </div>
+
+    <!-- Loading dos Últimos Resultados -->
+    <div id="loadingResults" class="loading">
+        <div class="loading-spinner"></div> Carregando últimos resultados...
+    </div>
+
+    <!-- Seção dos Últimos Resultados -->
+    <div class="latest-results-section" id="latestResultsSection" style="display: none;">
+        <div class="latest-results-title">
+            <i class="fas fa-trophy"></i> Últimos 6 Concursos da +Milionária
+        </div>
+        <div class="results-grid" id="resultsGrid">
+            <!-- Resultados serão inseridos aqui -->
+        </div>
+    </div>
+
+    <!-- Seção de Seleção de Números -->
+    <div class="number-selection-section">
+        <div class="selection-title">
+            <i class="fas fa-mouse-pointer"></i> Escolha seus Números e Trevos da Sorte
+        </div>
+        <div class="selection-info">
+            <p><strong>Selecione 6 números de 01 a 50 + 2 trevos de 1 a 6</strong></p>
+            <p id="selectedCount">Números: <span id="numbersCount">0</span>/6 • Trevos: <span id="trevosCount">0</span>/2</p>
+        </div>
+        
+        <!-- Números -->
+        <div class="numbers-section">
+            <div class="section-subtitle">
+                <i class="fas fa-sort-numeric-down"></i> Números (01 a 50)
+            </div>
+            <div class="numbers-grid" id="numbersGrid">
+                <!-- Números serão gerados via JavaScript -->
+            </div>
+        </div>
+
+        <!-- Trevos -->
+        <div class="numbers-section">
+            <div class="section-subtitle">
+                <i class="fas fa-leaf"></i> Trevos (1 a 6)
+            </div>
+            <div class="trevos-grid" id="trevosGrid">
+                <!-- Trevos serão gerados via JavaScript -->
+            </div>
+        </div>
+
+		<div align="center">
+			<span><small>A +Milionária tem sorteios às quartas e sábados!</small></span>
+		</div>
+        <div class="selection-controls">
+            <button class="button" onclick="clearSelection()">
+                <i class="fas fa-eraser"></i> Limpar Seleção
+            </button>
+            <button class="button" onclick="randomSelection()">
+                <i class="fas fa-dice"></i> Seleção Aleatória
+            </button>
+        </div>
+    </div>
+
+    <!-- Configurações de Geração -->
+    <div class="generation-section">
+        <div class="generation-title">
+            <i class="fas fa-cogs"></i> Configurações dos Jogos
+        </div>
+        <div class="config-grid">
+            <div class="config-item">
+                <label>Jogos:</label>
+                <input type="number" id="qtdJogos" min="1" value="8" onchange="updateTotalValue()">
+                <span class="tooltip"><i class="fas fa-info-circle"></i>
+                    <span class="tooltiptext">Número de jogos diferentes que serão gerados</span>
+                </span>
+            </div>
+            
+            <div class="config-item">
+                <label>Ajustes Números:</label>
+                <select id="ajusteDezenas">
+                    <option value="0">Sem Ajuste (0)</option>
+                    <option value="1" selected>+ 1</option>
+                    <option value="2">+ 2</option>
+                    <option value="3">+ 3</option>
+                    <option value="4">+ 4</option>
+                    <option value="5">+ 5</option>
+                    <option value="-1">- 1</option>
+                    <option value="-2">- 2</option>
+                    <option value="-3">- 3</option>
+                    <option value="-4">- 4</option>
+                    <option value="-5">- 5</option>
+                </select>
+                <span class="tooltip"><i class="fas fa-info-circle"></i>
+                    <span class="tooltiptext">Valor que será somado/subtraído dos números (até ±5)</span>
+                </span>
+            </div>
+
+            <div class="config-item">
+                <label>Ajustes Trevos:</label>
+                <select id="ajusteTrevos">
+                    <option value="0" selected>Sem Ajuste (0)</option>
+                    <option value="1">+ 1</option>
+                    <option value="2">+ 2</option>
+                    <option value="-1">- 1</option>
+                    <option value="-2">- 2</option>
+                </select>
+                <span class="tooltip"><i class="fas fa-info-circle"></i>
+                    <span class="tooltiptext">Valor que será somado/subtraído dos trevos (até ±2)</span>
+                </span>
+            </div>
+
+			<div class="config-item">
+				<label>Custo:</label>
+				<select id="valorJogo" onchange="updateTotalValue()">
+					<option value="6.00" selected>6+2 → R$ 6,00</option>
+					<option value="24.00">7+2 → R$ 24,00</option>
+					<option value="60.00">8+2 → R$ 60,00</option>
+					<option value="120.00">9+2 → R$ 120,00</option>
+					<option value="210.00">10+2 → R$ 210,00</option>
+				</select>
+				<span class="tooltip"><i class="fas fa-info-circle"></i>
+					<span class="tooltiptext">Valor de cada jogo conforme a quantidade de números escolhidos</span>
+				</span>
+			</div>
+
+            <div class="config-item">
+                <label>Estratégia:</label>
+                <select id="estrategia">
+                    <option value="equilibrado" selected>Equilibrado</option>
+                    <option value="frequencia">Frequência</option>
+                    <option value="paridade">Pares/Ímpares</option>
+                    <option value="soma">Soma Otimizada</option>
+                    <option value="sequencia">Anti-Sequência</option>
+                    <option value="combinado">Números + Trevos</option>
+                </select>
+                <span class="tooltip"><i class="fas fa-info-circle"></i>
+                    <span class="tooltiptext">Estratégia baseada em análises estatísticas dos resultados</span>
+                </span>
+            </div>
+
+            <div class="config-item">
+                <label>Não a Repetição:</label>
+                <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+                    <input type="checkbox" id="evitarUltimoConcurso" style="width: auto; margin-right: 10px; transform: scale(1.5);">
+                    <label for="evitarUltimoConcurso" style="margin: 0; font-size: 0.9rem; text-transform: none;"><span><small>Ñ últimos sorteados</small></span></label>
+                </div>
+                <span class="tooltip"><i class="fas fa-info-circle"></i>
+                    <span class="tooltiptext">Quando marcado, evita usar números e trevos do último concurso</span>
+                </span>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <div id="totalValueDisplay" style="background: white; border: 2px solid #6d72c5; border-radius: 8px; padding: 15px; margin-bottom: 15px; color: #24275b; font-weight: bold;">
+                <i class="fas fa-calculator"></i> Total: R$ 54,00 (9 jogos × R$ 6,00)
+            </div>
+            <div id="digitsInfo" style="background: linear-gradient(135deg, #6d72c5, #31357c); color: white; border-radius: 8px; padding: 10px; margin-bottom: 15px; font-weight: bold; text-align: center; display: none;">
+                <i class="fas fa-chart-bar"></i> <span id="digitsText">Aguardando seleção...</span>
+            </div>
+            <button class="button" onclick="generateGames()" id="generateBtn">
+                <i class="fas fa-magic"></i> Gerar Jogos
+            </button>
+            <button class="button" onclick="showInfoModal()" style="background: #3498db; margin-left: 10px;">
+                <i class="fas fa-info-circle"></i> Como Funciona
+            </button>
+        </div>
+    </div>
+
+    <!-- Seção dos Jogos Gerados -->
+    <div class="games-section" id="gamesSection">
+        <div class="games-title">
+            <i class="fas fa-list-ol"></i> Seus Jogos Gerados
+        </div>
+        <div id="gamesContainer">
+            <!-- Jogos serão inseridos aqui -->
+        </div>
+        
+        <!-- Botões de Download -->
+        <div class="download-buttons">
+            <button class="button" onclick="downloadTXT()">
+                <i class="fas fa-file-alt"></i> Baixar TXT
+            </button>
+            <button class="button" onclick="downloadHTML()">
+                <i class="fas fa-file-code"></i> Baixar HTML
+            </button>
+            <button class="button" onclick="downloadXLSX()">
+                <i class="fas fa-file-excel"></i> Baixar XLSX
+            </button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div>Feito por: <i>Márcio Fernando Maia - Todos os direitos reservados - 2025</i></div>
+</footer>
+
+<script>
+let selectedNumbers = [];
+let selectedTrevos = [];
+let generatedGames = [];
+let latestResults = [];
+let analysisData = {};
+
+// Configuração da API
+const API_CONFIG = {
+    CAIXA_URL: 'https://servicebus2.caixa.gov.br/portaldeloterias/api/maismilionaria',
+    CORS_PROXY_URLS: [
+        'https://api.allorigins.win/get?url=',
+        'https://corsproxy.io/?'
+    ]
+};
+
+// =================== INICIALIZAÇÃO ===================
+
+window.addEventListener('load', () => {
+    console.log('Gerador de Jogos da +Milionária carregado!');
+    
+    // Gerar grids de números e trevos
+    generateNumbersGrid();
+    generateTrevosGrid();
+    
+    // Carregar últimos resultados
+    loadLatestResults();
+});
+
+// =================== GRID DE NÚMEROS E TREVOS ===================
+
+function generateNumbersGrid() {
+    const grid = document.getElementById('numbersGrid');
+    
+    for (let i = 1; i <= 50; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'number-btn';
+        btn.textContent = i.toString().padStart(2, '0');
+        btn.onclick = () => toggleNumber(i, btn);
+        grid.appendChild(btn);
+    }
+}
+
+function generateTrevosGrid() {
+    const grid = document.getElementById('trevosGrid');
+    
+    for (let i = 1; i <= 6; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'trevo-btn';
+        btn.textContent = i.toString();
+        btn.onclick = () => toggleTrevo(i, btn);
+        grid.appendChild(btn);
+    }
+}
+
+function toggleNumber(number, btn) {
+    const index = selectedNumbers.indexOf(number);
+    
+    if (index === -1) {
+        // Adicionar número
+        if (selectedNumbers.length < 6) {
+            selectedNumbers.push(number);
+            btn.classList.add('selected');
+        } else {
+            showNotification('❌ Você só pode selecionar 6 números!', 'error');
+        }
+    } else {
+        // Remover número
+        selectedNumbers.splice(index, 1);
+        btn.classList.remove('selected');
+    }
+    
+    updateSelectedCount();
+    updateGenerateButton();
+    updateDigitsInfo();
+    updateTotalValue();
+}
+
+function toggleTrevo(trevo, btn) {
+    const index = selectedTrevos.indexOf(trevo);
+    
+    if (index === -1) {
+        // Adicionar trevo
+        if (selectedTrevos.length < 2) {
+            selectedTrevos.push(trevo);
+            btn.classList.add('selected');
+        } else {
+            showNotification('❌ Você só pode selecionar 2 trevos!', 'error');
+        }
+    } else {
+        // Remover trevo
+        selectedTrevos.splice(index, 1);
+        btn.classList.remove('selected');
+    }
+    
+    updateSelectedCount();
+    updateGenerateButton();
+    updateDigitsInfo();
+    updateTotalValue();
+}
+
+function updateSelectedCount() {
+    const numbersCountSpan = document.getElementById('numbersCount');
+    const trevosCountSpan = document.getElementById('trevosCount');
+    numbersCountSpan.textContent = selectedNumbers.length;
+    trevosCountSpan.textContent = selectedTrevos.length;
+}
+
+function updateGenerateButton() {
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = selectedNumbers.length !== 6 || selectedTrevos.length !== 2;
+}
+
+function updateDigitsInfo() {
+    const digitsDiv = document.getElementById('digitsInfo');
+    const digitsText = document.getElementById('digitsText');
+    
+    if (selectedNumbers.length > 0 || selectedTrevos.length > 0) {
+        // Análise dos números
+        const pares = selectedNumbers.filter(n => n % 2 === 0).length;
+        const impares = selectedNumbers.length - pares;
+        const soma = selectedNumbers.reduce((acc, n) => acc + n, 0);
+        
+        // Análise dos trevos
+        const trevosParesCount = selectedTrevos.filter(t => t % 2 === 0).length;
+        const trevosImparesCount = selectedTrevos.length - trevosParesCount;
+        const somaTrevos = selectedTrevos.reduce((acc, t) => acc + t, 0);
+        
+        digitsText.textContent = `Núm: ${pares}P/${impares}I (${soma}) • Trevos: ${trevosParesCount}P/${trevosImparesCount}I (${somaTrevos})`;
+        digitsDiv.style.display = 'block';
+    } else {
+        digitsDiv.style.display = 'none';
+    }
+}
+
+function updateTotalValue() {
+    const qtdJogos = parseInt(document.getElementById('qtdJogos').value) || 8;
+    const ajusteNum = parseInt(document.getElementById('ajusteDezenas').value);
+    const ajusteTrevo = parseInt(document.getElementById('ajusteTrevos').value);
+    const valorJogo = parseFloat(document.getElementById('valorJogo').value);
+    
+    // Se sem ajuste, só o jogo original. Com ajuste, original + ajustados
+    const totalJogos = (ajusteNum === 0 && ajusteTrevo === 0) ? 1 : qtdJogos + 1;
+    const total = (totalJogos * valorJogo).toFixed(2);
+    
+    const totalDisplay = document.getElementById('totalValueDisplay');
+    totalDisplay.innerHTML = `<i class="fas fa-calculator"></i> Total: R$ ${total.replace('.', ',')} (${totalJogos} jogos × R$ ${valorJogo.toFixed(2).replace('.', ',')})`;
+}
+
+function clearSelection() {
+    selectedNumbers = [];
+    selectedTrevos = [];
+    
+    document.querySelectorAll('.number-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    document.querySelectorAll('.trevo-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    
+    updateSelectedCount();
+    updateGenerateButton();
+    updateDigitsInfo();
+    showNotification('🧹 Seleção limpa!', 'info');
+}
+
+function randomSelection() {
+    clearSelection();
+    
+    // Selecionar 6 números aleatórios
+    while (selectedNumbers.length < 6) {
+        const num = Math.floor(Math.random() * 50) + 1;
+        if (!selectedNumbers.includes(num)) {
+            selectedNumbers.push(num);
+            const btn = document.querySelector(`.number-btn:nth-child(${num})`);
+            btn.classList.add('selected');
+        }
+    }
+    
+    // Selecionar 2 trevos aleatórios
+    while (selectedTrevos.length < 2) {
+        const trevo = Math.floor(Math.random() * 6) + 1;
+        if (!selectedTrevos.includes(trevo)) {
+            selectedTrevos.push(trevo);
+            const btn = document.querySelector(`.trevo-btn:nth-child(${trevo})`);
+            btn.classList.add('selected');
+        }
+    }
+    
+    updateSelectedCount();
+    updateGenerateButton();
+    updateDigitsInfo();
+    showNotification('🎲 6 números + 2 trevos selecionados aleatoriamente!', 'success');
+}
+
+// =================== ÚLTIMOS RESULTADOS ===================
+
+async function loadLatestResults() {
+    const loadingDiv = document.getElementById('loadingResults');
+    const resultsSection = document.getElementById('latestResultsSection');
+    
+    loadingDiv.style.display = 'block';
+    
+    try {
+        console.log('Carregando últimos resultados...');
+        
+        // Tentar buscar últimos 6 resultados
+        const results = await fetchLatestResults();
+        latestResults = results;
+        
+        displayLatestResults(results);
+        analyzeResults(results);
+        
+        loadingDiv.style.display = 'none';
+        resultsSection.style.display = 'block';
+        
+    } catch (error) {
+        console.error('Erro ao carregar resultados:', error);
+        loadingDiv.style.display = 'none';
+        
+        // Mostrar resultados fictícios em caso de erro
+        const mockResults = generateMockResults();
+        latestResults = mockResults;
+        displayLatestResults(mockResults);
+        analyzeResults(mockResults);
+        resultsSection.style.display = 'block';
+        
+        showNotification('⚠️ Usando dados simulados (API indisponível)', 'info');
+    }
+}
+
+async function fetchLatestResults() {
+    // Tentar descobrir último concurso
+    let ultimoConcurso = 273; // fallback
+    
+    for (const proxyUrl of API_CONFIG.CORS_PROXY_URLS) {
+        try {
+            let url = `${proxyUrl}${encodeURIComponent(API_CONFIG.CAIXA_URL)}`;
+            const response = await fetch(url);
+            
+            if (response.ok) {
+                const proxyData = await response.json();
+                const data = JSON.parse(proxyData.contents);
+                if (data.numero) {
+                    ultimoConcurso = parseInt(data.numero);
+                    break;
+                }
+            }
+        } catch (error) {
+            console.warn(`Proxy ${proxyUrl} falhou:`, error);
+        }
+    }
+    
+    // Buscar os últimos 6 concursos
+    const results = [];
+    for (let i = 0; i < 6; i++) {
+        const concursoNum = ultimoConcurso - i;
+        const result = await fetchSingleResult(concursoNum);
+        if (result) results.push(result);
+    }
+    
+    return results;
+}
+
+async function fetchSingleResult(concursoNum) {
+    for (const proxyUrl of API_CONFIG.CORS_PROXY_URLS) {
+        try {
+            const caixaUrl = `${API_CONFIG.CAIXA_URL}/${concursoNum}`;
+            let url = `${proxyUrl}${encodeURIComponent(caixaUrl)}`;
+            
+            const response = await fetch(url);
+            if (response.ok) {
+                const proxyData = await response.json();
+                const data = JSON.parse(proxyData.contents);
+                
+                if (data.numero && data.listaDezenas && data.trevosSorteados) {
+                    return {
+                        concurso: data.numero,
+                        data: formatDate(data.dataApuracao || new Date().toISOString()),
+                        dezenas: data.listaDezenas,
+                        trevos: data.trevosSorteados,
+                        acumulado: data.acumulado || false,
+                        proximoConcurso: data.numeroConcursoProximo,
+                        dataProximoConcurso: data.dataProximoConcurso,
+                        valorEstimadoProximo: data.valorEstimadoProximoConcurso,
+                        premiacoes: data.listaRateioPremio || [],
+                        local: data.localSorteio || 'Espaço da Sorte',
+                        cidade: data.nomeMunicipioUFSorteio || 'SAO PAULO, SP'
+                    };
+                }
+            }
+        } catch (error) {
+            console.warn(`Erro ao buscar concurso ${concursoNum}:`, error);
+        }
+    }
+    
+    return null;
+}
+
+function generateMockResults() {
+    const results = [];
+    
+    for (let i = 0; i < 6; i++) {
+        const concurso = 273 - i;
+        const date = new Date();
+        date.setDate(date.getDate() - (i * 4)); // +Milionária é 2x por semana
+        
+        const dezenas = [];
+        while (dezenas.length < 6) {
+            const num = Math.floor(Math.random() * 50) + 1;
+            if (!dezenas.includes(num)) {
+                dezenas.push(num);
+            }
+        }
+        dezenas.sort((a, b) => a - b);
+        
+        const trevos = [];
+        while (trevos.length < 2) {
+            const trevo = Math.floor(Math.random() * 6) + 1;
+            if (!trevos.includes(trevo)) {
+                trevos.push(trevo);
+            }
+        }
+        trevos.sort((a, b) => a - b);
+        
+        results.push({
+            concurso: concurso,
+            data: formatDate(date.toISOString()),
+            dezenas: dezenas.map(n => n.toString().padStart(2, '0')),
+            trevos: trevos.map(t => t.toString())
+        });
+    }
+    
+    return results;
+}
+
+function displayLatestResults(results) {
+    const grid = document.getElementById('resultsGrid');
+    grid.innerHTML = '';
+    
+    results.forEach((result, index) => {
+        const card = document.createElement('div');
+        card.className = `result-card ${index === 0 ? 'destaque' : ''}`;
+        
+        // Determinar status do concurso
+        const statusConcurso = result.acumulado ? 'ACUMULOU!' : (result.premiacoes && result.premiacoes[0] && result.premiacoes[0].numeroDeGanhadores > 0 ? `${result.premiacoes[0].numeroDeGanhadores} GANHADORES (6+2)` : 'TEVE GANHADORES!');
+        
+        // Análise dos números
+        const numeros = result.dezenas.map(d => parseInt(d));
+        const pares = numeros.filter(n => n % 2 === 0).length;
+        const impares = 6 - pares;
+        const soma = numeros.reduce((acc, n) => acc + n, 0);
+        
+        // Análise dos trevos
+        const trevosNum = result.trevos.map(t => parseInt(t));
+        const trevosParesCount = trevosNum.filter(t => t % 2 === 0).length;
+        const trevosImparesCount = 2 - trevosParesCount;
+        const somaTrevos = trevosNum.reduce((acc, t) => acc + t, 0);
+        
+        // Informações de premiação
+        let premiacaoInfo = '';
+        if (result.premiacoes && result.premiacoes.length > 0) {
+            premiacaoInfo = result.premiacoes.filter(p => p.numeroDeGanhadores > 0).slice(0, 5).map(p => 
+                `<div class="premio-item">
+                    <span>${p.descricaoFaixa}:</span>
+                    <span class="premio-valor">${p.numeroDeGanhadores} - R$ ${p.valorPremio.toFixed(2).replace('.', ',')}</span>
+                </div>`
+            ).join('');
+        }
+        
+        // Próximo concurso e valor estimado
+        const proximoConcurso = result.proximoConcurso ? `Concurso ${result.proximoConcurso}` : 'A definir';
+        const dataProximo = result.dataProximoConcurso ? formatDate(result.dataProximoConcurso) : 'A definir';
+        const valorEstimado = result.valorEstimadoProximo ? `R$ ${(result.valorEstimadoProximo / 1000000).toFixed(0)} milhões` : 'A definir';
+        
+        card.innerHTML = `
+            <div class="result-header">
+                ${index === 0 ? '🏆 ' : ''}Concurso ${result.concurso}
+            </div>
+            <div class="result-date">
+                <i class="fas fa-calendar"></i> ${result.data} ${result.cidade ? `(${result.cidade.split(',')[1] || result.cidade})` : ''}
+            </div>
+            <div class="result-numbers">
+                ${result.dezenas.map(num => 
+                    `<span class="dezena-resultado">${num}</span>`
+                ).join('')}
+            </div>
+            <div class="result-numbers" style="margin-top: 10px;">
+                ${result.trevos.map(trevo => 
+                    `<span class="trevo-resultado">${trevo}</span>`
+                ).join('')}
+            </div>
+            
+            <div style="text-align: center; margin: 10px 0; font-size: 0.85rem; color: #24275b;">
+                <strong>Números:</strong> ${pares}P/${impares}I (${soma}) • <strong>Trevos:</strong> ${trevosParesCount}P/${trevosImparesCount}I (${somaTrevos})
+            </div>
+            
+            <div style="color: ${result.acumulado ? '#e74c3c' : '#27ae60'}; font-weight: bold; margin: 10px 0; font-size: 0.9rem;">
+                ${statusConcurso}
+            </div>
+            
+            ${premiacaoInfo ? `<div class="result-premio-info">${premiacaoInfo}</div>` : ''}
+            
+            <div class="result-estimado">
+                Próximo Sorteio: ${proximoConcurso}<br>
+                ${dataProximo}<br>
+                Prêmio Estimado: <strong>${valorEstimado}</strong>
+            </div>
+            
+            <div>
+                <button class="use-result-btn" onclick="useResult(${index})">
+                    <i class="fas fa-magic"></i> Usar estes números
+                </button>
+            </div>
+        `;
+        
+        grid.appendChild(card);
+    });
+    
+    // Destacar números e trevos do último concurso na grade de seleção
+    if (results.length > 0) {
+        highlightLastConcursoNumbers(results[0].dezenas, results[0].trevos);
+    }
+}
+
+function highlightLastConcursoNumbers(lastConcursoDezenas, lastConcursoTrevos) {
+    // Limpar destaques anteriores
+    document.querySelectorAll('.number-btn').forEach(btn => {
+        btn.classList.remove('last-result');
+    });
+    document.querySelectorAll('.trevo-btn').forEach(btn => {
+        btn.classList.remove('last-result');
+    });
+    
+    // Destacar números do último concurso
+    lastConcursoDezenas.forEach(dezena => {
+        const numero = parseInt(dezena);
+        const btn = document.querySelector(`.number-btn:nth-child(${numero})`);
+        if (btn) {
+            btn.classList.add('last-result');
+        }
+    });
+    
+    // Destacar trevos do último concurso
+    lastConcursoTrevos.forEach(trevo => {
+        const numeroTrevo = parseInt(trevo);
+        const btn = document.querySelector(`.trevo-btn:nth-child(${numeroTrevo})`);
+        if (btn) {
+            btn.classList.add('last-result');
+        }
+    });
+    
+    // Adicionar informação visual
+    const selectionInfo = document.querySelector('.selection-info');
+    if (selectionInfo && lastConcursoDezenas.length > 0) {
+        const lastResultInfo = document.getElementById('lastResultInfo');
+        if (lastResultInfo) lastResultInfo.remove();
+        
+        const info = document.createElement('p');
+        info.id = 'lastResultInfo';
+        info.innerHTML = `<strong style="color: #e74c3c;">🔴 Números e trevos em destaque saíram no último concurso</strong>`;
+        info.style.marginTop = '10px';
+        selectionInfo.appendChild(info);
+    }
+}
+
+function useResult(index) {
+    const result = latestResults[index];
+    if (!result) return;
+    
+    // Limpar seleção atual
+    clearSelection();
+    
+    // Selecionar números do resultado
+    const numeros = result.dezenas.map(n => parseInt(n));
+    numeros.forEach(num => {
+        selectedNumbers.push(num);
+        const btn = document.querySelector(`.number-btn:nth-child(${num})`);
+        if (btn) btn.classList.add('selected');
+    });
+    
+    // Selecionar trevos do resultado
+    const trevos = result.trevos.map(t => parseInt(t));
+    trevos.forEach(trevo => {
+        selectedTrevos.push(trevo);
+        const btn = document.querySelector(`.trevo-btn:nth-child(${trevo})`);
+        if (btn) btn.classList.add('selected');
+    });
+    
+    updateSelectedCount();
+    updateGenerateButton();
+    updateDigitsInfo();
+    updateTotalValue();
+    showNotification(`✅ Números e trevos do concurso ${result.concurso} selecionados!`, 'success');
+}
+
+function analyzeResults(results) {
+    // Análise dos últimos resultados para estratégias
+    const allNumbers = results.flatMap(r => r.dezenas.map(d => parseInt(d)));
+    const allTrevos = results.flatMap(r => r.trevos.map(t => parseInt(t)));
+    
+    // Frequência dos números
+    const frequency = {};
+    for (let i = 1; i <= 50; i++) frequency[i] = 0;
+    allNumbers.forEach(num => frequency[num]++);
+    
+    // Frequência dos trevos
+    const trevoFrequency = {};
+    for (let i = 1; i <= 6; i++) trevoFrequency[i] = 0;
+    allTrevos.forEach(trevo => trevoFrequency[trevo]++);
+    
+    // Padrões de paridade
+    const paresCount = allNumbers.filter(n => n % 2 === 0).length;
+    const imparesCount = allNumbers.length - paresCount;
+    
+    const trevosParesCount = allTrevos.filter(t => t % 2 === 0).length;
+    const trevosImparesCount = allTrevos.length - trevosParesCount;
+    
+    analysisData = {
+        frequency,
+        trevoFrequency,
+        paresCount,
+        imparesCount,
+        trevosParesCount,
+        trevosImparesCount,
+        allNumbers,
+        allTrevos,
+        avgSoma: results.reduce((acc, r) => {
+            const soma = r.dezenas.reduce((s, d) => s + parseInt(d), 0);
+            return acc + soma;
+        }, 0) / results.length
+    };
+}
+
+// =================== GERAÇÃO DE JOGOS ===================
+
+async function generateGames() {
+    if (selectedNumbers.length !== 6 || selectedTrevos.length !== 2) {
+        showNotification('❌ Selecione 6 números e 2 trevos!', 'error');
+        return;
+    }
+    
+    const qtdJogos = parseInt(document.getElementById('qtdJogos').value);
+    const ajusteNumeros = parseInt(document.getElementById('ajusteDezenas').value);
+    const ajusteTrevos = parseInt(document.getElementById('ajusteTrevos').value);
+    const estrategia = document.getElementById('estrategia').value;
+    const evitarUltimoConcurso = document.getElementById('evitarUltimoConcurso').checked;
+    
+    if (qtdJogos < 1) {
+        showNotification('❌ Quantidade de jogos deve ser no mínimo 1!', 'error');
+        return;
+    }
+    
+    // Aviso para grandes quantidades
+    if (qtdJogos > 1000) {
+        const confirmed = await showConfirmDialog(
+            `⚠️ Você está prestes a gerar ${qtdJogos.toLocaleString()} jogos!\n\n` +
+            `Isso pode:\n` +
+            `• Demorar alguns segundos para processar\n` +
+            `• Consumir mais memória do navegador\n` +
+            `• Gerar arquivos grandes para download\n\n` +
+            `Deseja continuar?`
+        );
+        
+        if (!confirmed) {
+            return;
+        }
+    }
+    
+    // Obter números e trevos do último concurso para evitar
+    let numerosEvitar = [], trevosEvitar = [];
+    if (evitarUltimoConcurso && latestResults.length > 0) {
+        numerosEvitar = latestResults[0].dezenas.map(d => parseInt(d));
+        trevosEvitar = latestResults[0].trevos.map(t => parseInt(t));
+    }
+    
+    generatedGames = [];
+    let jogoCounter = 1;
+    
+    // Verificar se números/trevos selecionados coincidem com último concurso
+    if (evitarUltimoConcurso && (numerosEvitar.length > 0 || trevosEvitar.length > 0)) {
+        const conflictNum = selectedNumbers.some(num => numerosEvitar.includes(num));
+        const conflictTrevo = selectedTrevos.some(trevo => trevosEvitar.includes(trevo));
+        if (conflictNum || conflictTrevo) {
+            showNotification('⚠️ Alguns números/trevos selecionados saíram no último concurso!', 'info');
+        }
+    }
+    
+    // Adicionar jogo original apenas UMA VEZ
+    const originalNumbers = [...selectedNumbers].sort((a, b) => a - b);
+    const originalTrevos = [...selectedTrevos].sort((a, b) => a - b);
+    generatedGames.push({
+        jogo: jogoCounter++,
+        tipo: 'original',
+        estrategia: 'original',
+        numeros: originalNumbers.map(n => n.toString().padStart(2, '0')),
+        trevos: originalTrevos.map(t => t.toString())
+    });
+    
+    // Gerar jogos ajustados com estratégias
+    if (ajusteNumeros !== 0 || ajusteTrevos !== 0) {
+        for (let i = 1; i <= qtdJogos; i++) {
+            const gameResult = generateGameWithStrategy(estrategia, ajusteNumeros, ajusteTrevos, i, numerosEvitar, trevosEvitar);
+            
+            generatedGames.push({
+                jogo: jogoCounter++,
+                tipo: 'ajustado',
+                estrategia: estrategia,
+                ajusteNumeros: ajusteNumeros * i,
+                ajusteTrevos: ajusteTrevos * i,
+                numeros: gameResult.numeros.map(n => n.toString().padStart(2, '0')),
+                trevos: gameResult.trevos.map(t => t.toString())
+            });
+        }
+    }
+    
+    displayGeneratedGamesOptimized();
+    
+    let successMessage = `✅ ${generatedGames.length} jogos gerados com sucesso!`;
+    if (evitarUltimoConcurso && (numerosEvitar.length > 0 || trevosEvitar.length > 0)) {
+        successMessage += ' (Evitando repetições do último concurso)';
+    }
+    
+    showNotification(successMessage, 'success');
+}
+
+function generateGameWithStrategy(estrategia, ajusteNumeros, ajusteTrevos, numeroJogo, numerosEvitar, trevosEvitar) {
+    let gameNumbers = [...selectedNumbers];
+    let gameTrevos = [...selectedTrevos];
+    
+    switch (estrategia) {
+        case 'equilibrado':
+            gameNumbers = applyEquilibradoStrategyNumbers(gameNumbers, ajusteNumeros, numeroJogo);
+            gameTrevos = applyEquilibradoStrategyTrevos(gameTrevos, ajusteTrevos, numeroJogo);
+            break;
+            
+        case 'frequencia':
+            gameNumbers = applyFrequenciaStrategyNumbers(gameNumbers, ajusteNumeros, numeroJogo);
+            gameTrevos = applyFrequenciaStrategyTrevos(gameTrevos, ajusteTrevos, numeroJogo);
+            break;
+            
+        case 'paridade':
+            gameNumbers = applyParidadeStrategyNumbers(gameNumbers, ajusteNumeros, numeroJogo);
+            gameTrevos = applyParidadeStrategyTrevos(gameTrevos, ajusteTrevos, numeroJogo);
+            break;
+            
+        case 'soma':
+            gameNumbers = applySomaStrategyNumbers(gameNumbers, ajusteNumeros, numeroJogo);
+            gameTrevos = applySomaStrategyTrevos(gameTrevos, ajusteTrevos, numeroJogo);
+            break;
+            
+        case 'sequencia':
+            gameNumbers = applySequenciaStrategyNumbers(gameNumbers, ajusteNumeros, numeroJogo);
+            gameTrevos = applySequenciaStrategyTrevos(gameTrevos, ajusteTrevos, numeroJogo);
+            break;
+            
+        case 'combinado':
+            const result = applyCombinedStrategy(gameNumbers, gameTrevos, ajusteNumeros, ajusteTrevos, numeroJogo);
+            gameNumbers = result.numeros;
+            gameTrevos = result.trevos;
+            break;
+            
+        default:
+            // Ajuste progressivo simples
+            const ajusteAtualNum = ajusteNumeros * numeroJogo;
+            const ajusteAtualTrevo = ajusteTrevos * numeroJogo;
+            
+            gameNumbers = gameNumbers.map(num => {
+                let adjusted = num + ajusteAtualNum;
+                if (adjusted < 1) adjusted = 1;
+                if (adjusted > 50) adjusted = 50;
+                return adjusted;
+            });
+            
+            gameTrevos = gameTrevos.map(trevo => {
+                let adjusted = trevo + ajusteAtualTrevo;
+                if (adjusted < 1) adjusted = 1;
+                if (adjusted > 6) adjusted = 6;
+                return adjusted;
+            });
+    }
+    
+    // Evitar números e trevos do último concurso se necessário
+    if (numerosEvitar.length > 0) {
+        gameNumbers = gameNumbers.map(num => {
+            if (numerosEvitar.includes(num)) {
+                for (let alt of [num + 1, num - 1, num + 2, num - 2]) {
+                    if (alt >= 1 && alt <= 50 && !numerosEvitar.includes(alt) && !gameNumbers.includes(alt)) {
+                        return alt;
+                    }
+                }
+            }
+            return num;
+        });
+    }
+    
+    if (trevosEvitar.length > 0) {
+        gameTrevos = gameTrevos.map(trevo => {
+            if (trevosEvitar.includes(trevo)) {
+                for (let alt of [trevo + 1, trevo - 1]) {
+                    if (alt >= 1 && alt <= 6 && !trevosEvitar.includes(alt) && !gameTrevos.includes(alt)) {
+                        return alt;
+                    }
+                }
+            }
+            return trevo;
+        });
+    }
+    
+    // Garantir 6 números únicos entre 1 e 50
+    gameNumbers = [...new Set(gameNumbers)];
+    while (gameNumbers.length < 6) {
+        const novoNum = Math.floor(Math.random() * 50) + 1;
+        if (!gameNumbers.includes(novoNum)) {
+            gameNumbers.push(novoNum);
+        }
+    }
+    if (gameNumbers.length > 6) {
+        gameNumbers = gameNumbers.slice(0, 6);
+    }
+    
+    // Garantir 2 trevos únicos entre 1 e 6
+    gameTrevos = [...new Set(gameTrevos)];
+    while (gameTrevos.length < 2) {
+        const novoTrevo = Math.floor(Math.random() * 6) + 1;
+        if (!gameTrevos.includes(novoTrevo)) {
+            gameTrevos.push(novoTrevo);
+        }
+    }
+    if (gameTrevos.length > 2) {
+        gameTrevos = gameTrevos.slice(0, 2);
+    }
+    
+    return {
+        numeros: gameNumbers.sort((a, b) => a - b),
+        trevos: gameTrevos.sort((a, b) => a - b)
+    };
+}
+
+// Estratégias específicas para números
+function applyEquilibradoStrategyNumbers(numbers, ajuste, numeroJogo) {
+    const ajusteAtual = ajuste * numeroJogo;
+    return numbers.map(num => {
+        let adjusted = num + ajusteAtual + (numeroJogo % 3) - 1;
+        if (adjusted < 1) adjusted = 1;
+        if (adjusted > 50) adjusted = 50;
+        return adjusted;
+    });
+}
+
+function applyFrequenciaStrategyNumbers(numbers, ajuste, numeroJogo) {
+    if (!analysisData.frequency) return numbers;
+    
+    const sortedByFreq = Object.entries(analysisData.frequency)
+        .sort(([,a], [,b]) => b - a)
+        .map(([num]) => parseInt(num));
+    
+    const newNumbers = [...numbers];
+    const numSubstituicoes = Math.min(2, numbers.length);
+    
+    for (let i = 0; i < numSubstituicoes; i++) {
+        const index = i % newNumbers.length;
+        const useFrequent = (numeroJogo + i) % 2 === 0;
+        const replacement = useFrequent ? 
+            sortedByFreq[i % 5] : 
+            sortedByFreq[sortedByFreq.length - 1 - (i % 5)];
+        
+        newNumbers[index] = replacement;
+    }
+    
+    return newNumbers;
+}
+
+function applyParidadeStrategyNumbers(numbers, ajuste, numeroJogo) {
+    const targetPares = Math.round(analysisData.paresCount / analysisData.imparesCount * 3);
+    
+    let newNumbers = [];
+    for (let i = 1; i <= 50 && newNumbers.length < 6; i++) {
+        const isPar = i % 2 === 0;
+        const paresAtual = newNumbers.filter(n => n % 2 === 0).length;
+        
+        if ((isPar && paresAtual < targetPares) || (!isPar && newNumbers.length - paresAtual < 6 - targetPares)) {
+            if (numbers.includes(i) || Math.random() < 0.3) {
+                newNumbers.push(i);
+            }
+        }
+    }
+    
+    while (newNumbers.length < 6) {
+        const num = Math.floor(Math.random() * 50) + 1;
+        if (!newNumbers.includes(num)) {
+            newNumbers.push(num);
+        }
+    }
+    
+    return newNumbers.slice(0, 6);
+}
+
+function applySomaStrategyNumbers(numbers, ajuste, numeroJogo) {
+    const targetSoma = analysisData.avgSoma || 155; // Soma média da +Milionária
+    const somaAtual = numbers.reduce((acc, n) => acc + n, 0);
+    const diferenca = targetSoma - somaAtual;
+    
+    return numbers.map(num => {
+        const ajusteIndividual = Math.round(diferenca / 6) + (ajuste * numeroJogo);
+        let adjusted = num + ajusteIndividual;
+        if (adjusted < 1) adjusted = 1;
+        if (adjusted > 50) adjusted = 50;
+        return adjusted;
+    });
+}
+
+function applySequenciaStrategyNumbers(numbers, ajuste, numeroJogo) {
+    const newNumbers = [];
+    const usedNumbers = new Set();
+    
+    numbers.forEach(num => {
+        let adjusted = num + (ajuste * numeroJogo);
+        
+        while ((usedNumbers.has(adjusted - 1) || usedNumbers.has(adjusted + 1)) && adjusted >= 1 && adjusted <= 50) {
+            adjusted = adjusted < 25 ? adjusted + 2 : adjusted - 2;
+            if (adjusted < 1) adjusted = Math.floor(Math.random() * 50) + 1;
+            if (adjusted > 50) adjusted = Math.floor(Math.random() * 50) + 1;
+        }
+        
+        if (adjusted >= 1 && adjusted <= 50 && !usedNumbers.has(adjusted)) {
+            newNumbers.push(adjusted);
+            usedNumbers.add(adjusted);
+        }
+    });
+    
+    while (newNumbers.length < 6) {
+        const num = Math.floor(Math.random() * 50) + 1;
+        if (!usedNumbers.has(num)) {
+            newNumbers.push(num);
+            usedNumbers.add(num);
+        }
+    }
+    
+    return newNumbers.sort((a, b) => a - b);
+}
+
+// Estratégias específicas para trevos
+function applyEquilibradoStrategyTrevos(trevos, ajuste, numeroJogo) {
+    const ajusteAtual = ajuste * numeroJogo;
+    return trevos.map(trevo => {
+        let adjusted = trevo + ajusteAtual + (numeroJogo % 2);
+        if (adjusted < 1) adjusted = 1;
+        if (adjusted > 6) adjusted = 6;
+        return adjusted;
+    });
+}
+
+function applyFrequenciaStrategyTrevos(trevos, ajuste, numeroJogo) {
+    if (!analysisData.trevoFrequency) return trevos;
+    
+    const sortedByFreq = Object.entries(analysisData.trevoFrequency)
+        .sort(([,a], [,b]) => b - a)
+        .map(([trevo]) => parseInt(trevo));
+    
+    const useFrequent = numeroJogo % 2 === 0;
+    return useFrequent ? 
+        [sortedByFreq[0], sortedByFreq[1]] : 
+        [sortedByFreq[sortedByFreq.length - 1], sortedByFreq[sortedByFreq.length - 2]];
+}
+
+function applyParidadeStrategyTrevos(trevos, ajuste, numeroJogo) {
+    const targetPares = Math.round(analysisData.trevosParesCount / analysisData.trevosImparesCount);
+    
+    if (targetPares >= 1) {
+        return [2, 3]; // 1 par, 1 ímpar
+    } else {
+        return [1, 3]; // 2 ímpares
+    }
+}
+
+function applySomaStrategyTrevos(trevos, ajuste, numeroJogo) {
+    const targetSoma = 7; // Soma média dos trevos
+    const somaAtual = trevos.reduce((acc, t) => acc + t, 0);
+    const diferenca = targetSoma - somaAtual;
+    
+    return trevos.map(trevo => {
+        const ajusteIndividual = Math.round(diferenca / 2) + (ajuste * numeroJogo);
+        let adjusted = trevo + ajusteIndividual;
+        if (adjusted < 1) adjusted = 1;
+        if (adjusted > 6) adjusted = 6;
+        return adjusted;
+    });
+}
+
+function applySequenciaStrategyTrevos(trevos, ajuste, numeroJogo) {
+    // Para trevos, evitar sequências é mais simples
+    const options = [[1, 3], [1, 4], [1, 5], [1, 6], [2, 4], [2, 5], [2, 6], [3, 5], [3, 6], [4, 6]];
+    return options[numeroJogo % options.length];
+}
+
+function applyCombinedStrategy(numbers, trevos, ajusteNum, ajusteTrevo, numeroJogo) {
+    // Estratégia que considera tanto números quanto trevos juntos
+    const somaTotal = numbers.reduce((acc, n) => acc + n, 0) + trevos.reduce((acc, t) => acc + t, 0);
+    
+    if (somaTotal < 160) {
+        // Aumentar números e trevos
+        numbers = numbers.map(n => Math.min(50, n + 2));
+        trevos = trevos.map(t => Math.min(6, t + 1));
+    } else if (somaTotal > 170) {
+        // Diminuir números e trevos
+        numbers = numbers.map(n => Math.max(1, n - 2));
+        trevos = trevos.map(t => Math.max(1, t - 1));
+    }
+    
+    return {
+        numeros: numbers,
+        trevos: trevos
+    };
+}
+
+// =================== DOWNLOADS ===================
+
+function downloadTXT() {
+    if (generatedGames.length === 0) {
+        showNotification('❌ Nenhum jogo foi gerado ainda!', 'error');
+        return;
+    }
+    
+    let content = "";
+    
+    generatedGames.forEach(game => {
+        content += `${game.numeros.join(' ')} | ${game.trevos.join(' ')}\n`;
+    });
+    
+    downloadFile(content, 'jogos_mais_milionaria.txt', 'text/plain');
+    showNotification('📄 Arquivo TXT baixado! (números | trevos)', 'success');
+}
+
+function downloadHTML() {
+    if (generatedGames.length === 0) {
+        showNotification('❌ Nenhum jogo foi gerado ainda!', 'error');
+        return;
+    }
+    
+    let html = `
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Jogos da +Milionária</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ededf8, #dbdcf0);
+            margin: 0;
+            padding: 20px;
+            color: #0f1024;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #1d1f49;
+        }
+        .info {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #31357c;
+        }
+        .game {
+            background: white;
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #6d72c5;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+        .game-title {
+            font-weight: bold;
+            color: #1d1f49;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        .numbers, .trevos {
+            margin: 15px 0;
+        }
+        .number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            background: #31357c;
+            color: white;
+            border-radius: 50%;
+            margin: 0 5px;
+            font-weight: bold;
+        }
+        .trevo {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            background: #4caf50;
+            color: white;
+            border-radius: 50%;
+            margin: 0 5px;
+            font-weight: bold;
+            position: relative;
+        }
+        .trevo::before {
+            content: "🍀";
+            font-size: 1.2rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .strategy {
+            background: #6d72c5;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .section-title {
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            color: #24275b;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #24275b;
+            font-style: italic;
+        }
+        @media print {
+            body { background: white; }
+            .game { page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🟤 MEUS JOGOS DA +MILIONÁRIA 🟤</h1>
+    </div>
+    
+    <div class="info">
+        <p><strong>Data de Geração:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+        <p><strong>Total de Jogos:</strong> ${generatedGames.length}</p>
+        <p><strong>Estratégia Principal:</strong> ${generatedGames[1]?.estrategia.toUpperCase() || 'ORIGINAL'}</p>
+    </div>
+    
+    ${generatedGames.map(game => {
+        // Análise do jogo
+        const numeros = game.numeros.map(n => parseInt(n));
+        const trevos = game.trevos.map(t => parseInt(t));
+        const paresNum = numeros.filter(n => n % 2 === 0).length;
+        const imparesNum = 6 - paresNum;
+        const paresTrevo = trevos.filter(t => t % 2 === 0).length;
+        const imparesTrevo = 2 - paresTrevo;
+        const somaNum = numeros.reduce((acc, n) => acc + n, 0);
+        const somaTrevo = trevos.reduce((acc, t) => acc + t, 0);
+        
+        return `
+        <div class="game">
+            <div class="game-title">🎫 Jogo ${game.jogo}</div>
+            
+            <div class="section-title">Números:</div>
+            <div class="numbers">
+                ${game.numeros.map(num => `<span class="number">${num}</span>`).join('')}
+            </div>
+            
+            <div class="section-title">Trevos:</div>
+            <div class="trevos">
+                ${game.trevos.map(trevo => `<span class="trevo">${trevo}</span>`).join('')}
+            </div>
+            
+            <div class="strategy">${game.tipo.toUpperCase()} - ${game.estrategia?.toUpperCase() || 'ORIGINAL'}</div>
+            <div style="margin-top: 10px; font-size: 0.9rem; color: #24275b;">
+                <strong>Números:</strong> ${paresNum}P/${imparesNum}I (${somaNum}) • 
+                <strong>Trevos:</strong> ${paresTrevo}P/${imparesTrevo}I (${somaTrevo})
+            </div>
+        </div>
+        `;
+    }).join('')}
+    
+    <div class="footer">
+        <p>Gerado por: <strong>Gerador de Jogos da +Milionária</strong></p>
+        <p>🟤 Boa sorte nos prêmios milionários! 🟤</p>
+    </div>
+</body>
+</html>`;
+    
+    downloadFile(html, 'jogos_mais_milionaria.html', 'text/html');
+    showNotification('🌐 Arquivo HTML baixado!', 'success');
+}
+
+function downloadXLSX() {
+    if (generatedGames.length === 0) {
+        showNotification('❌ Nenhum jogo foi gerado ainda!', 'error');
+        return;
+    }
+    
+    // Criar dados para a planilha
+    const data = [
+        ['JOGOS DA +MILIONÁRIA - GERADOS AUTOMATICAMENTE'],
+        [`Data de Geração: ${new Date().toLocaleString('pt-BR')}`],
+        [`Total de Jogos: ${generatedGames.length}`],
+        [`Estratégia: ${generatedGames[1]?.estrategia.toUpperCase() || 'ORIGINAL'}`],
+        [''], // linha vazia
+        ['Jogo', 'Tipo', 'Estratégia', 'N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'T1', 'T2']
+    ];
+    
+    generatedGames.forEach(game => {
+        data.push([
+            `Jogo ${game.jogo}`,
+            game.tipo.toUpperCase(),
+            game.estrategia?.toUpperCase() || 'ORIGINAL',
+            ...game.numeros,
+            ...game.trevos
+        ]);
+    });
+    
+    data.push(['']); // linha vazia
+    data.push(['Gerado por: Gerador de Jogos da +Milionária']);
+    data.push(['Boa sorte! 🟤']);
+    
+    // Criar workbook
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    
+    // Ajustar largura das colunas
+    const colWidths = [
+        {wch: 12}, // Jogo
+        {wch: 10}, // Tipo
+        {wch: 12}, // Estratégia
+        {wch: 4}, {wch: 4}, {wch: 4}, {wch: 4}, {wch: 4}, {wch: 4}, // N1-N6
+        {wch: 4}, {wch: 4}  // T1-T2
+    ];
+    ws['!cols'] = colWidths;
+    
+    XLSX.utils.book_append_sheet(wb, ws, "Jogos +Milionária");
+    
+    // Baixar arquivo
+    XLSX.writeFile(wb, 'jogos_mais_milionaria.xlsx');
+    showNotification('📊 Arquivo XLSX baixado!', 'success');
+}
+
+// =================== FUNÇÕES AUXILIARES ===================
+
+function downloadFile(content, fileName, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    
+    setTimeout(() => {
+        URL.revokeObjectURL(link.href);
+    }, 100);
+}
+
+function formatDate(dateString) {
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pt-BR');
+    } catch (error) {
+        return new Date().toLocaleDateString('pt-BR');
+    }
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 
+                     type === 'error' ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 
+                     'linear-gradient(135deg, #31357c, #6d72c5)'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        z-index: 10000;
+        font-weight: 600;
+        animation: slideInRight 0.3s ease;
+        max-width: 300px;
+    `;
+    notification.textContent = message;
+    
+    // Adicionar CSS da animação se não existir
+    if (!document.getElementById('notification-style')) {
+        const style = document.createElement('style');
+        style.id = 'notification-style';
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(notification);
+    
+    // Remover após 4 segundos
+    setTimeout(() => {
+        notification.remove();
+    }, 4000);
+}
+
+// =================== FUNÇÕES DE OTIMIZAÇÃO ===================
+
+function showConfirmDialog(message) {
+    return new Promise((resolve) => {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        `;
+        
+        const dialog = document.createElement('div');
+        dialog.style.cssText = `
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 3px solid #31357c;
+        `;
+        
+        dialog.innerHTML = `
+            <div style="text-align: center; margin-bottom: 25px;">
+                <h3 style="color: #1d1f49; margin-bottom: 15px; font-size: 1.4rem;">⚠️ Confirmação Necessária</h3>
+                <p style="color: #0f1024; line-height: 1.6; white-space: pre-line; font-size: 1rem;">${message}</p>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <button id="cancelBtn" style="
+                    background: #e74c3c;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                ">❌ Cancelar</button>
+                <button id="confirmBtn" style="
+                    background: #31357c;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                ">✅ Continuar</button>
+            </div>
+        `;
+        
+        modal.appendChild(dialog);
+        document.body.appendChild(modal);
+        
+        // Adicionar eventos
+        const cancelBtn = dialog.querySelector('#cancelBtn');
+        const confirmBtn = dialog.querySelector('#confirmBtn');
+        
+        cancelBtn.addEventListener('click', () => {
+            document.body.removeChild(modal);
+            resolve(false);
+        });
+        
+        confirmBtn.addEventListener('click', () => {
+            document.body.removeChild(modal);
+            resolve(true);
+        });
+        
+        // Fechar com ESC
+        const keyHandler = (e) => {
+            if (e.key === 'Escape') {
+                document.body.removeChild(modal);
+                document.removeEventListener('keydown', keyHandler);
+                resolve(false);
+            }
+        };
+        document.addEventListener('keydown', keyHandler);
+        
+        // Hover effects
+        cancelBtn.addEventListener('mouseenter', () => {
+            cancelBtn.style.background = '#c0392b';
+            cancelBtn.style.transform = 'translateY(-2px)';
+        });
+        cancelBtn.addEventListener('mouseleave', () => {
+            cancelBtn.style.background = '#e74c3c';
+            cancelBtn.style.transform = 'translateY(0)';
+        });
+        
+        confirmBtn.addEventListener('mouseenter', () => {
+            confirmBtn.style.background = '#1d1f49';
+            confirmBtn.style.transform = 'translateY(-2px)';
+        });
+        confirmBtn.addEventListener('mouseleave', () => {
+            confirmBtn.style.background = '#31357c';
+            confirmBtn.style.transform = 'translateY(0)';
+        });
+    });
+}
+
+// Otimização para grandes quantidades de jogos
+function displayGeneratedGamesOptimized() {
+    const container = document.getElementById('gamesContainer');
+    const section = document.getElementById('gamesSection');
+    
+    // Para quantidades muito grandes, mostrar apenas estatísticas
+    if (generatedGames.length > 5000) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; background: white; border-radius: 10px; border: 2px solid #31357c; margin-bottom: 20px;">
+                <h3 style="color: #1d1f49; margin-bottom: 20px;">
+                    🎮 ${generatedGames.length.toLocaleString()} Jogos Gerados com Sucesso!
+                </h3>
+                <p style="color: #0f1024; margin-bottom: 15px; font-size: 1.1rem;">
+                    <strong>Devido à grande quantidade, os jogos não são exibidos na tela para otimizar a performance.</strong>
+                </p>
+                <p style="color: #24275b; margin-bottom: 20px;">
+                    Use os botões de download abaixo para obter seus jogos:
+                </p>
+                <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                    <span style="background: #31357c; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold;">
+                        📄 TXT: ${(generatedGames.length * 25 / 1024).toFixed(1)} KB
+                    </span>
+                    <span style="background: #6d72c5; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold;">
+                        🌐 HTML: ${(generatedGames.length * 300 / 1024).toFixed(1)} KB
+                    </span>
+                    <span style="background: #9295d3; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold;">
+                        📊 XLSX: ${(generatedGames.length * 80 / 1024).toFixed(1)} KB
+                    </span>
+                </div>
+            </div>
+        `;
+    } else if (generatedGames.length > 1000) {
+        // Para quantidades médias, mostrar apenas os primeiros 50 jogos
+        container.innerHTML = `
+            <div style="text-align: center; padding: 20px; background: #ededf8; border-radius: 8px; border: 2px solid #6d72c5; margin-bottom: 20px;">
+                <p style="color: #1d1f49; font-weight: bold; margin-bottom: 10px;">
+                    📊 ${generatedGames.length.toLocaleString()} jogos gerados! Exibindo apenas os primeiros 50 para otimizar a performance.
+                </p>
+                <small style="color: #24275b;">Use os botões de download para obter todos os jogos.</small>
+            </div>
+            <div class="games-grid" id="gamesGrid"></div>
+        `;
+        
+        const gamesGrid = document.getElementById('gamesGrid');
+        
+        // Mostrar apenas os primeiros 50 jogos
+        generatedGames.slice(0, 50).forEach(game => {
+            const card = createGameCard(game);
+            gamesGrid.appendChild(card);
+        });
+    } else {
+        // Para quantidades normais, mostrar todos os jogos
+        container.innerHTML = '<div class="games-grid" id="gamesGrid"></div>';
+        const gamesGrid = document.getElementById('gamesGrid');
+        
+        generatedGames.forEach(game => {
+            const card = createGameCard(game);
+            gamesGrid.appendChild(card);
+        });
+    }
+    
+    section.style.display = 'block';
+}
+
+// Função auxiliar para criar um card de jogo
+function createGameCard(game) {
+    const card = document.createElement('div');
+    
+    // Definir classe baseada no tipo
+    if (game.tipo === 'original') {
+        card.className = 'game-card game-original';
+    } else {
+        card.className = 'game-card game-adjusted';
+    }
+    
+    // Criar badge do tipo
+    let typeBadge = '';
+    if (game.tipo === 'original') {
+        typeBadge = '<span class="game-type-badge">🟤 ORIGINAL</span>';
+    } else {
+        const ajusteNumSymbol = game.ajusteNumeros > 0 ? '+' : '';
+        const ajusteTrevoSymbol = game.ajusteTrevos > 0 ? '+' : '';
+        typeBadge = `<span class="game-type-badge">📈 ${game.estrategia.toUpperCase()} (N${ajusteNumSymbol}${game.ajusteNumeros}/T${ajusteTrevoSymbol}${game.ajusteTrevos})</span>`;
+    }
+    
+    // Análise do jogo
+    const numeros = game.numeros.map(n => parseInt(n));
+    const trevos = game.trevos.map(t => parseInt(t));
+    const paresNum = numeros.filter(n => n % 2 === 0).length;
+    const imparesNum = 6 - paresNum;
+    const paresTrevo = trevos.filter(t => t % 2 === 0).length;
+    const imparesTrevo = 2 - paresTrevo;
+    const somaNum = numeros.reduce((acc, n) => acc + n, 0);
+    const somaTrevo = trevos.reduce((acc, t) => acc + t, 0);
+    
+    card.innerHTML = `
+        <div class="game-header">
+            <i class="fas fa-ticket-alt"></i> Jogo ${game.jogo}
+            ${typeBadge}
+        </div>
+        <div class="game-numbers">
+            ${game.numeros.map(num => 
+                `<span class="dezena-jogo">${num}</span>`
+            ).join('')}
+        </div>
+        <div class="game-trevos">
+            ${game.trevos.map(trevo => 
+                `<span class="trevo-jogo">${trevo}</span>`
+            ).join('')}
+        </div>
+        <div style="text-align: center; margin-top: 10px;">
+            <span class="digits-info">N: ${paresNum}P/${imparesNum}I (${somaNum}) • T: ${paresTrevo}P/${imparesTrevo}I (${somaTrevo})</span>
+        </div>
+    `;
+    
+    return card;
+}
+
+// =================== MODAL DE INFORMAÇÕES ===================
+
+function showInfoModal() {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 99999;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        overflow-y: auto;
+        padding: 20px;
+    `;
+    
+    const dialog = document.createElement('div');
+    dialog.style.cssText = `
+        background: white;
+        border-radius: 15px;
+        max-width: 800px;
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+        border: 3px solid #31357c;
+        position: relative;
+    `;
+    
+    dialog.innerHTML = `
+        <div style="background: linear-gradient(135deg, #31357c, #6d72c5); color: white; padding: 20px; border-radius: 12px 12px 0 0; text-align: center; position: relative;">
+            <button id="closeModal" style="
+                position: absolute;
+                top: 15px;
+                right: 20px;
+                background: rgba(255,255,255,0.2);
+                border: none;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+                border-radius: 50%;
+                width: 35px;
+                height: 35px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">×</button>
+            <h2 style="margin: 0; font-size: 1.8rem;">
+                <i class="fas fa-info-circle"></i> Como Funciona o Sistema
+            </h2>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Otimizado para +Milionária - números + trevos</p>
+        </div>
+        
+        <div style="padding: 30px; line-height: 1.6;">
+            
+            <!-- Informações da +Milionária -->
+            <div style="background: linear-gradient(135deg, #31357c, #6d72c5); color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                <h3 style="margin: 0 0 15px 0; font-size: 1.3rem;">
+                    <i class="fas fa-star"></i> Características da +Milionária
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                        <strong>🎯 6 Números + 2 Trevos</strong><br>
+                        <small>6 números de 01 a 50 + 2 trevos de 1 a 6</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                        <strong>🏆 10 Faixas de Prêmio</strong><br>
+                        <small>Combinações de números + trevos</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                        <strong>💰 Prêmios Milionários</strong><br>
+                        <small>6+2 para o prêmio máximo</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                        <strong>📅 2x Semana</strong><br>
+                        <small>Quartas e sábados</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estratégias de Geração -->
+            <div style="background: linear-gradient(135deg, #27ae60, #229954); color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                <h3 style="margin: 0 0 15px 0; font-size: 1.3rem;">
+                    <i class="fas fa-brain"></i> Estratégias Duplas (Números + Trevos)
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0;">⚖️ Equilibrado:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>✅ Ajustes progressivos pequenos</li>
+                            <li>✅ Números e trevos balanceados</li>
+                            <li>✅ Estratégia mais segura</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0;">📊 Frequência:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>✅ Números e trevos mais/menos sorteados</li>
+                            <li>✅ Análise separada para cada tipo</li>
+                            <li>✅ Baseado em histórico real</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0;">⚖️ Pares/Ímpares:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>✅ Proporção ideal números e trevos</li>
+                            <li>✅ Baseado em estatísticas</li>
+                            <li>✅ Dupla otimização</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0;">🧮 Soma Otimizada:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>✅ Soma próxima à média histórica</li>
+                            <li>✅ Números ~155, Trevos ~7</li>
+                            <li>✅ Faixas estatísticas ideais</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0;">🔄 Anti-Sequência:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>✅ Evita números consecutivos</li>
+                            <li>✅ Trevos não sequenciais</li>
+                            <li>✅ Reduz padrões óbvios</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0;">🎯 Combinado:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>✅ Considera soma total</li>
+                            <li>✅ Ajuste conjunto inteligente</li>
+                            <li>✅ Estratégia única da +Milionária</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ajustes Duplos -->
+            <div style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                <h3 style="margin: 0 0 15px 0; font-size: 1.3rem;">
+                    <i class="fas fa-sliders-h"></i> Sistema de Ajustes Duplos
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <strong>🔢 Ajustes Números</strong><br>
+                        <small>±1 a ±5 para números (1-50)</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <strong>🍀 Ajustes Trevos</strong><br>
+                        <small>±1 a ±2 para trevos (1-6)</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <strong>🎮 Combinações Independentes</strong><br>
+                        <small>Ajustes separados para máxima flexibilidade</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <strong>📊 Análise Separada</strong><br>
+                        <small>Estatísticas próprias para cada elemento</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Preços e Sistema -->
+            <div style="background: linear-gradient(135deg, #e67e22, #d35400); color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                <h3 style="margin: 0 0 15px 0; font-size: 1.3rem;">
+                    <i class="fas fa-coins"></i> Sistema de Preços
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                        <strong>6+2</strong><br>
+                        <small>R$ 6,00</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                        <strong>7+2</strong><br>
+                        <small>R$ 24,00</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                        <strong>8+2</strong><br>
+                        <small>R$ 60,00</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                        <strong>9+2</strong><br>
+                        <small>R$ 120,00</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                        <strong>10+2</strong><br>
+                        <small>R$ 210,00</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Downloads -->
+            <div style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 20px; border-radius: 10px;">
+                <h3 style="margin: 0 0 15px 0; font-size: 1.3rem;">
+                    <i class="fas fa-download"></i> Formatos de Download
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <strong>📄 TXT</strong><br>
+                        <small>Formato: "01 02 03 04 05 06 | 1 2" (números | trevos)</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <strong>🌐 HTML</strong><br>
+                        <small>Página web completa com números e trevos separados</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <strong>📊 XLSX</strong><br>
+                        <small>Planilha com colunas N1-N6 e T1-T2 para análises</small>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 0 0 12px 12px; text-align: center; border-top: 2px solid #e9ecef;">
+            <button onclick="document.body.removeChild(this.closest('.fixed'))" style="
+                background: linear-gradient(135deg, #31357c, #6d72c5);
+                color: white;
+                border: none;
+                padding: 12px 30px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1.1rem;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 5px 15px rgba(49,53,124,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <i class="fas fa-check"></i> Entendi! Vamos aos Milhões
+            </button>
+            <p style="margin: 15px 0 0 0; color: #6c757d; font-size: 0.9rem;">
+                <i class="fas fa-trophy"></i> +Milionária - números + trevos = prêmios milionários!
+            </p>
+        </div>
+    `;
+    
+    modal.appendChild(dialog);
+    document.body.appendChild(modal);
+    
+    // Eventos para fechar o modal
+    const closeBtn = dialog.querySelector('#closeModal');
+    closeBtn.addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+    
+    // Fechar clicando fora do modal
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            document.body.removeChild(modal);
+        }
+    });
+    
+    // Fechar com ESC
+    const keyHandler = (e) => {
+        if (e.key === 'Escape') {
+            document.body.removeChild(modal);
+            document.removeEventListener('keydown', keyHandler);
+        }
+    };
+    document.addEventListener('keydown', keyHandler);
+}
+</script>
+
+</body>
+</html>
